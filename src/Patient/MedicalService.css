@@ -1,0 +1,36 @@
+table{
+    width: 500px;
+    margin: 10px;
+    padding: 8px;
+    text-align: center;
+    
+}
+.Therapy-slot-container{
+    margin: 10px;
+    padding: 8px;
+    padding-left: 350px;
+    background-color: darkslateblue;
+    border-radius: 6px;
+    display: flex;
+    flex : wrap;
+    color: white;
+}
+
+
+.therapy-btn{
+    text-align: center;
+    margin-left: 200px;
+    height: 50px;
+    width: 150px;
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+    border: none;
+}
+h1{
+    text-align: center;
+}
+.Paymentoptions{
+    display: none;
+    margin-top: 10px;
+}

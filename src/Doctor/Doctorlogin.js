@@ -17,23 +17,28 @@ const Doctorlogin=()=>
     {
         if(doctorId!== "" && password!== "")
         {
-            fetch('http://localhost:8092/doctor/getall')
+            fetch('http://localhost:9099/api/getdata')
             .then((response)=>response.json())
             .then((pdata)=>
             {
                 const isLoginSuccess=checkLogin(pdata,doctorId,password);
-             
+            
                         if (isLoginSuccess) {
                           alert("Loggedin Successfully");
-                          navigate("/doctordashboard");
+                          navigate("/ddashboard");
                         
                           const loggedIn = pdata.find(
                             (user) =>
                               user.doctorId === doctorId && user.password === password
                           );
                           console.log(loggedIn);
-                          setDoctorDetails(loggedIn);
-                          
+
+                          var doctors = JSON.stringify(loggedIn);
+
+                          // Store the string in local storage
+                          localStorage.setItem('loggedIn', doctors);
+
+                         
                         } else {
                           // Handle unsuccessful login
                           alert("Invalid username or password");
@@ -80,8 +85,8 @@ const Doctorlogin=()=>
               <>
            
          <LandNav/>
-                      <div className="container-fluid " style={{backgroundImage:`url(https://www.litmus-solutions.com/wp-content/uploads/2018/12/GettyImages-927897070.jpg)`,height:'600px'}}>
-                      <h2 style={{textAlign:'center',paddingTop:'50px'}}>Doctor Login</h2>
+                      <div className="container-fluid " style={{backgroundImage:`url(https://wallpaperaccess.com/full/741760.jpg)`,height:'1200px'}}>
+                      <h2 style={{textAlign:'center',paddingTop:'100px'}}>Doctor Login</h2>
                           <div className="row">
                               <div className="col-12">
                                   <form className="p-5">

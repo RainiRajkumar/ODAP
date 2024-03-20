@@ -1,196 +1,228 @@
 
 import '../App.css';
-
-
+import 'bootstrap-icons/bootstrap-icons.svg';
+import axios from 'axios';
 import React from "react";
 import { Link } from "react-router-dom";
 import { useState,useEffect } from 'react';
 import FooterPage from '../Landpage/FooterPage';
+import PatientNav from './PatientNav';
 
 const PatientDashboard=()=>
 {
-  var [date,setDate] = useState(new Date());
-    
-  useEffect(() => {
-      var timer = setInterval(()=>setDate(new Date()), 1000 )
-      return function cleanup() {
-          clearInterval(timer)
+  
+
+  const [doctorNames, setDoctorNames] = useState([]);
+  const [hospitalNames, setHospitalNames] = useState([]);
+  const [speciality, setspeciality] = useState([]);
+  const [address, setAddress] = useState([]);
+
+  var storedResponseString = localStorage.getItem('loggedIn');
+
+// Convert the string back to an object
+var storedResponse = JSON.parse(storedResponseString);
+
+// Access the particular item within the response object
+var particularItem = storedResponse.patientId;
+
+const handleNavigation = () => {
+  // Clear localStorage
+  localStorage.clear();
+};
+
+
+useEffect(() => {
+  async function fetchSpecialities() {
+    try {
+      const response = await axios.get("http://localhost:9099/api/getAll");
+      const data = response.data;
+
+      if (Array.isArray(data)) {
+        const specialityList = [...new Set(data.map((item) => item.speciality))];
+        setspeciality(specialityList);
+      } else {
+        console.error("Invalid data structure:", data);
       }
-  
-  });
-  
+    } catch (error) {
+      console.error("Error fetching specialities:", error);
+    }
+  }
+
+  fetchSpecialities();
+}, []);
+
+const handleSpecialityChange = async (selectedValue) => {
+  try {
+    const response = await axios.get(`http://localhost:9099/api/getSpecility/${selectedValue}`);
+    const data = response.data;
+
+    if (Array.isArray(data)) {
+      const doctorNames = data.map(doctor => ({ name: doctor.doctorName }));
+      const hospitals = data.map(doctor => ({ name: doctor.hospitalName, id: doctor.hospitalId }));
+      const addresses = data.map(doctor => ({ name: doctor.address2, id: doctor.address2 }));
+      
+
+
+      setDoctorNames(doctorNames);
+      setHospitalNames(hospitals);
+      setAddress(addresses);
+    } else {
+      console.error("Invalid data structure:", data);
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
     return(
         <>
+        <PatientNav/>
 
 
-<nav class="navbar navbar-expand-lg" style={{backgroundColor:'purple'}}>
-    <div className="container-fluid">
-    <Link to="/"><a class="navbar-brand"><img src="https://tse4.mm.bing.net/th?id=OIP.FOOgadJTQepY-ICLMJkBJgAAAA&pid=Api&P=0&h=180" style={{height:'60px',width:'60px'}}/></a></Link>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item ">
-          <p style={{fontSize:'30px',textAlign:'center'}}>Online Doctor Appointment Portal</p>
-        </li>
-      </ul>
+        <div class="container-fluid display-table">
+        <div class="row display-table-row">
+            <div class="col-md-2 col-sm-1 hidden-xs display-table-cell v-align box" style={{backgroundColor:'lightgreen'}} id="navigation">
+                <div class="logo">
+                  <img src="https://www.freeiconspng.com/thumbs/patient-icon/patient-icon-1.png" alt="merkery_logo" style={{height:'200px',width:'950px'}} />
+                </div>
+                <div class="navi">
+                    <ul>
+                        <li class="active"><Link to='#'><i class="fa fa-home"></i> ID :{particularItem}</Link></li>
+                        <li class="active"><Link to="/patientdashboard"><i class="bi bi-house-fill" ></i>Features</Link></li>
+                        <li ><Link to="/profile"> <i class="bi bi-person-fill" ></i>Profile</Link></li>
+                        <li ><Link to="/search"> <i class="bi bi-search" ></i>Search</Link></li>
+                        <li className="dropdown">
+                            <a href="#" className="dropdown-toggle" data-toggle="dropdown"><i className="bi bi-calendar2-fill"></i> Appointments</a>
+                        <ul className="dropdown">
+                           <li><Link to="/appointments">View Appointments</Link></li>
+                           <li><Link to="/medicalappointments">Medical Appointment</Link></li>
+                           <li><Link to="/diagnosticappointment">Diagnostic Appointment</Link></li>                          
+                        </ul>
+                        </li>
+                        {/* <li ><Link to="/appointments"><i class="bi bi-calendar2-fill"></i>Appointments</Link></li> */}
+                        <li ><Link to='/' onClick={handleNavigation}><i class="bi bi-box-arrow-right"></i>Logout</Link></li>
+                    </ul>
+                </div>
 
+              
+            </div>
 
-      <ul class="nav navbar-nav navbar-right">
-        <li class="nav-item">
-          <p style={{fontSize:'20px'}}>{date.toLocaleDateString()}  {date.toLocaleTimeString()}</p>
-        </li>
-      </ul>
+            <div class="col-md-10 col-sm-11 display-table-cell v-align">
+            <div className='container-fluid'> 
+                <div class="row">
+                    <header>
+
+                  <div class="col-md-11 col-sm-11 display-table-cell v-align">
     
-      
+    <div>
+  <form>
+    <div className="d-flex flex-row justify-content-center">
+    <div className="form-group" style={{padding:"10px"}}>
+      <label htmlFor="speciality">Specialisation:</label>
+      <select
+        style={{width:"190px"}}
+        id="speciality"
+        name="speciality" 
+        onChange={(e) => handleSpecialityChange(e.target.value)}
+      >
+        <option value="" >Select Specialisation</option>
+        {speciality.map((speciality, index) => (
+          <option  key={index} value={speciality}>
+            {speciality}
+          </option>
+        ))}
+      </select>
     </div>
-    </div>
- </nav>
   
-
-    <nav class="navbar navbar-expand-lg" style={{backgroundColor:'bisque'}}>
-    <div className="container-fluid">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item ">
-          <Link to="/profile">Profile</Link>
-        </li>
-        <li class="nav-item ">
-          <Link to="/">Logout</Link>
-        </li>
-
-      </ul>
+   
+  
+   
+    <div className="form-group" style={{padding:"10px"}}>
+      <label htmlFor="address">Address:</label>
+      <select
+                    style={{width:"190px"}}
+      id="address" name="address">
+        <option value="">Select Address</option>
+        {address.map((address, index) => (
+          <option key={index} value={address.id}>
+            {address.name}
+          </option>
+        ))}
+      </select>
     </div>
     </div>
-  </nav>
-
-    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-   <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img src="https://mobisoftinfotech.com/resources/wp-content/uploads/2018/07/Banner-1.png" style={{height:'500px'}} class="d-block w-100" alt="..."/>
-        </div>
-        <div class="carousel-item">
-            <img src="https://www.semiosissoftware.com/wp-content/uploads/2020/02/Doctor-Appointment-System-1536x840.jpg" style={{height:'500px'}} class="d-block w-100" alt="..."/>
-        </div>
-        <div class="carousel-item">
-            <img src="https://static.vecteezy.com/system/resources/previews/000/470/930/original/vector-online-medical-services-flat-design.jpg"  style={{height:'500px'}} class="d-block w-100" alt="..."/>
-        </div>
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
-</div>
-
-    
+  </form>
+  </div>
+  
       
       <div className="container-fluid">
+
         <div className="row p-3 ">          
-          <div className="col-sm-3">
-          <Link to="/online"><img className="landimage" src="doctorimage.jpg" alt=""></img></Link>
-            <p>Consultation services</p>
+          <div className="col-sm-3 col-md-6" style={{paddingLeft:'80px',paddingRight:'80px'}}>
+          <a href="/slotbooking"><img  className="landimage" src="https://www.wns.co.za/Portals/3/Images/HeaderBanner/desktop/5863/105/consulting_HD.jpg" style={{height:'250px',width:'300px'}} alt=""></img></a>
+          <br/>
+            <p style={{textAlign:'center'}}>Consultation services</p>
+            {/* <div className="btn btn-warning" ><a href="/slotbooking" >Appointment</a></div> */}
+           
+
           </div>
-          <div className="col-sm-3">
-            <Link to="/medical"><img className="landimage" src="therapy.jpg" alt=""></img></Link>
-            <p>Medical Services</p>
+
+          
+          <div className="col-sm-3 col-md-6" style={{paddingLeft:'80px',paddingRight:'80px'}} >
+          <a href="/medical"><img className="landimage" src="https://tse2.mm.bing.net/th?id=OIP.QmO1AvhIrqFxpo-E0cSsFQHaEK&pid=Api&P=0&h=180" style={{height:'250px',width:'300px'}} alt=""></img></a>
+           <br/>
+            <p style={{textAlign:'center',height: "150px", width: "300px" }}>Medical Services</p>
+            {/* <div className="btn btn-warning"><a href="/medical">BookNow</a></div> */}
+           
+
           </div>
-          <div className="col-sm-3"><Link to="/ambulance"><img className="landimage" src="ambulance.jpg" alt=""></img></Link>
-            <p>Ambulance Services</p>
+
           </div>
-          <div className="col-sm-3"><Link to="/diagnostic"><img className="landimage" src="diagnostic.jpg" alt=""></img></Link>
-            <p>Diagnostic services</p>
+          
+          <div className="row p-3 ">   
+          <div className="col-sm-3 col-md-6" style={{paddingLeft:'80px',paddingRight:'80px'}}>
+          <a href="/form"><img className="landimage" src="https://wallpaperaccess.com/full/1483985.jpg" style={{height:'250px',width:'300px'}} alt=""></img></a>
+            <br/>
+            <p style={{textAlign:'center'}}>Diagnostic services</p>
+            {/* <div className="btn btn-warning"><a href="/diagnostic">Book Test</a></div><br/> */}
+
+         
           </div>
+          <div className="col-sm-3 col-md-6" style={{paddingLeft:'80px',paddingRight:'80px'}}>
+          <a href="/ambulance"><img className="landimage" src="https://www.pngmart.com/files/13/Ambulance-Force-Traveller-Transparent-PNG.png" style={{height:'250px',width:'300px'}} alt=""></img></a>
+          <br/>
+            <p style={{textAlign:'center'}}>Ambulance Services</p>
+            {/* <div className="btn btn-warning"><a href="/ambulance">Book</a></div> */}
+            
+           
+          
+          
         </div>
       </div>
-      
+ 
 
-    <div className="container-fluid">
-      <div className="row p-5">
-        <div className="col-sm-4">
-          <h3 style={{textAlign:'center'}}>Diagnostic Tests</h3>
-          <ul class="list-unstyled">
-            <li className="landli">Complete Blood Count (CBC) Rs.200/-</li>
-            <li className="landli">Blood Chemistry Panel RS.250/-</li>
-            <li className="landli">Liver Function Tests (LFTs) Rs.300/-</li>
-            <li className="landli">Kidney Function Tests (KFTs) Rs.400/-</li>
-            <li className="landli">X-rays Rs.500/-</li>
-            <li className="landli">Computed Tomography (CT) Scan Rs.600/-</li>
-            <li className="landli">Magnetic Resonance Imaging (MRI) Rs.600/-</li>
-            <li className="landli">Ultrasound Rs.800/-</li>
-            <li className="landli">Electrocardiogram Rs.500/- (ECG or EKG)</li>
-            <li className="landli">Biopsy Rs.1000/-</li>
-            <li className="landli">Endoscopy Rs.1500/-</li>
-            <li className="landli">Genetic Tests Rs.2000/-</li>
-            <li className="landli">Pulmonary Function Tests Rs.1500/-</li>
-            <li className="landli">Urinalysis  Rs.1000/-</li>
-            <li className="landli">Colonoscopy Rs.1200/- </li>
-            <li className="landli">Lumbar Puncture (Spinal Tap) Rs.3000/-</li>
-          </ul>    
-        </div>
 
-        <div className="col-sm-4">
-          <h3 style={{textAlign:'center'}}>Consultation sevices</h3>
-          <ul class="list-unstyled">
-            <li className="landli">Complete Blood Count (CBC) Rs.200/-</li>
-            <li className="landli">Blood Chemistry Panel RS.250/-</li>
-            <li className="landli">Liver Function Tests (LFTs) Rs.300/-</li>
-            <li className="landli">Kidney Function Tests (KFTs) Rs.400/-</li>
-            <li className="landli">X-rays Rs.500/-</li>
-            <li className="landli">Computed Tomography (CT) Scan Rs.600/-</li>
-            <li className="landli">Magnetic Resonance Imaging (MRI) Rs.600/-</li>
-            <li className="landli">Ultrasound Rs.800/-</li>
-            <li className="landli">Electrocardiogram Rs.500/- (ECG or EKG)</li>
-            <li className="landli">Biopsy Rs.1000/-</li>
-            <li className="landli">Endoscopy Rs.1500/-</li>
-            <li className="landli">Genetic Tests Rs.2000/-</li>
-            <li className="landli">Pulmonary Function Tests Rs.1500/-</li>
-            <li className="landli">Urinalysis  Rs.1000/-</li>
-            <li className="landli">Colonoscopy Rs.1200/- </li>
-            <li className="landli">Lumbar Puncture (Spinal Tap) Rs.3000/-</li>
-          </ul>        
-        </div>
-   
 
-      
-        <div className="col-sm-4">
-          <h3 style={{textAlign:'center'}}>Medical sercives</h3>
-          <ul class="list-unstyled">
-            <li className="landli">Complete Blood Count (CBC) Rs.200/-</li>
-            <li className="landli">Blood Chemistry Panel RS.250/-</li>
-            <li className="landli">Liver Function Tests (LFTs) Rs.300/-</li>
-            <li className="landli">Kidney Function Tests (KFTs) Rs.400/-</li>
-            <li className="landli">X-rays Rs.500/-</li>
-            <li className="landli">Computed Tomography (CT) Scan Rs.600/-</li>
-            <li className="landli">Magnetic Resonance Imaging (MRI) Rs.600/-</li>
-            <li className="landli">Ultrasound Rs.800/-</li>
-            <li className="landli">Electrocardiogram Rs.500/- (ECG or EKG)</li>
-            <li className="landli">Biopsy Rs.1000/-</li>
-            <li className="landli">Endoscopy Rs.1500/-</li>
-            <li className="landli">Genetic Tests Rs.2000/-</li>
-            <li className="landli">Pulmonary Function Tests Rs.1500/-</li>
-            <li className="landli">Urinalysis  Rs.1000/-</li>
-            <li className="landli">Colonoscopy Rs.1200/- </li>
-            <li className="landli">Lumbar Puncture (Spinal Tap) Rs.3000/-</li>
-          </ul>          
-        </div>
-      </div>
-      </div>
-    <FooterPage/>
+
+
+
+
+
+</div>
+    
+  </div>
+</header>
+</div>
+
+</div>  
+</div>
+</div>
+
+</div>
+
+
+<FooterPage/>
 </>
     )
 }
 
 export default PatientDashboard;
-
-
-

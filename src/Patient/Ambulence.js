@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Ambulence.css';
-import Navbar from '../Navbar';
-import LandNav from '../Landpage/LandNav';
+import { useNavigate } from 'react-router-dom';
 import FooterPage from '../Landpage/FooterPage';
+import PatientNav from './PatientNav';
 
 
-const Ambulence = () => {
+const AmbulenceServices = () => {
+  const navigate = useNavigate();
   const [newCandidate, setNewCandidate] = useState({
     patientId: '',
     email: '',
-    phoneNumber: '',
+    mobileNumber: '',
     facilities: '',
     disease: '',
     date: '',
@@ -29,45 +30,130 @@ const Ambulence = () => {
     },
     fromHospitalName: '',
     toHospitalName: '',
+    serviceFee: 0,
+    totalFee: 0,
   });
+  
+  var storedResponseString = localStorage.getItem('loggedIn');
 
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+// Convert the string back to an object
+var storedResponse = JSON.parse(storedResponseString);
+
+// Access the particular item within the response object
+var particularItem = storedResponse.patientId;
+var name= storedResponse.patientName;
+var phone= storedResponse.patientMobileNumber;
+
+  const calculateServiceFee = () => {
+    console.log("Calculating service fee...");
+    let fee = 0;
+
+    console.log("From Location:", newCandidate.fromLocation);
+    console.log("To Location:", newCandidate.toLocation);
+    console.log("From Hospital:", newCandidate.fromHospitalName);
+    console.log("To Hospital:", newCandidate.toHospitalName);
+
+    if (newCandidate.fromLocation === 'Resident' && newCandidate.toLocation === 'Hospital') {
+      fee = 200; 
+    } else if (newCandidate.fromLocation === 'Hospital' && newCandidate.toLocation === 'Resident') {
+      fee = 240; 
+    } else if (newCandidate.fromLocation === 'Hospital' && newCandidate.toLocation === 'Hospital') {
+      if (newCandidate.fromHospitalName === 'Yashoda Hospital' && newCandidate.toHospitalName === 'Apollo Hospital') {
+        fee = 200; 
+      } else if (newCandidate.fromHospitalName === 'Yashoda Hospital' && newCandidate.toHospitalName === 'MGM Hospital') {
+        fee = 250; 
+      } else if (newCandidate.fromHospitalName === 'Apollo Hospital' && newCandidate.toHospitalName === 'MGM Hospital') {
+        fee = 180; 
+      } else if (newCandidate.fromHospitalName === 'MGM Hospital' && newCandidate.toHospitalName === 'Apollo Hospital'){
+        fee = 500;
+      } else if (newCandidate.fromHospitalName === 'Continental Hospital' && newCandidate.toHospitalName === 'KIMS Hospitals'){
+        fee = 250;
+      } else if (newCandidate.fromHospitalName === 'Apollo Hospital' && newCandidate.toHospitalName === 'Continental Hospital'){
+        fee = 300;
+      } else if (newCandidate.fromHospitalName === 'Medicover Hospitals' && newCandidate.toHospitalName === 'Maxcure Hospitals'){
+        fee = 320;
+      } else if (newCandidate.fromHospitalName === 'Sunshine Hospitals' && newCandidate.toHospitalName === 'Maxcure Hospitals'){
+        fee = 280;
+      } else if (newCandidate.fromHospitalName === 'Yashoda Hospital' && newCandidate.toHospitalName === 'Continental Hospital'){
+        fee = 400;
+      } else {
+        fee = 500;
+      }
+    }
+    console.log("Fee:", fee);
+    return fee;
+  };
+  
+  const calculateTotalFee = () => {
+    const gst = 0.12; 
+    const total = newCandidate.serviceFee * (1 + gst); 
+    return total;
+  };
+
+  useEffect(() => {
+    const fee = calculateServiceFee();
+    setNewCandidate(prevData => ({ ...prevData, serviceFee: fee }));
+  }, [newCandidate.fromLocation, newCandidate.toLocation, newCandidate.fromHospitalName, newCandidate.toHospitalName]);
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === 'fromHospitalName') {
-      setNewCandidate((prevData) => ({ ...prevData, fromHospitalName: value }));
-    } else if (name === 'toHospitalName') {
-      setNewCandidate((prevData) => ({ ...prevData, toHospitalName: value }));
-    } else if (name === 'fromLocation' || name === 'toLocation') {
-      setNewCandidate((prevData) => ({ ...prevData, [name]: value, fromHospitalName: '', toHospitalName: '' }));
-    } else if (name.startsWith('fromAddress') || name.startsWith('toAddress')) {
-      const [nestedName, nestedField] = name.split('.');
-
-      setNewCandidate((prevData) => {
-        const nestedAddress = { ...prevData[nestedName], [nestedField]: value };
-        return { ...prevData, [nestedName]: nestedAddress };
-      });
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      setNewCandidate(prevData => ({
+        ...prevData,
+        [parent]: {
+          ...prevData[parent],
+          [child]: value
+        }
+      }));
     } else {
-      setNewCandidate((prevData) => ({ ...prevData, [name]: value }));
+      setNewCandidate(prevData => ({ ...prevData, [name]: value }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const totalFee = calculateTotalFee();
+    const { patientId, email, mobileNumber, date, time, fromLocation, toLocation, serviceFee ,disease,facilities,fromHospitalName,toHospitalName} = newCandidate;
+    const dataToSend = {
+      patientId,
+      email,
+      mobileNumber,
+      date,
+      time,
+      disease,
+      facilities,
+      fromLocation,
+      toLocation,
+      serviceFee,
+      totalFee,
+      fromHospitalName, 
+      toHospitalName,
+    };
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const mobileRegex = /^[0-9]{10}$/;
+
+    if (!emailRegex.test(newCandidate.email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    if (!mobileRegex.test(newCandidate.mobileNumber)) {
+      alert('Please enter a valid 10-digit mobile number.');
+      return;
+    }
     try {
-      console.log('Submitting data:', newCandidate);
-      const response = await axios.post('http://localhost:8092/insert', newCandidate);
+      const response = await axios.post('http://localhost:8910/insert', dataToSend);
       if (response.status === 201) {
-        setSuccessMessage('Booking successful!');
-        setErrorMessage('');
+        alert('Booking successful!');
         setNewCandidate({
           patientId: '',
           email: '',
-          phoneNumber: '',
+          mobileNumber: '',
           facilities: '',
           disease: '',
           date: '',
@@ -86,27 +172,28 @@ const Ambulence = () => {
           },
           fromHospitalName: '',
           toHospitalName: '',
+          serviceFee: 0,
+          totalFee: 0,
         });
+        navigate('/PaymentPage');
       } else {
-        setSuccessMessage('');
-        setErrorMessage('Booking failed. Please try again.');
+        alert('Booking failed. Please try again.');
       }
     } catch (error) {
       console.error('Error submitting data:', error);
-      setSuccessMessage('');
-      setErrorMessage('Booking failed. Please try again.');
+      alert('Booking failed. Please try again.');
     }
   };
 
   return (
     <>
-    <LandNav/>
+      <PatientNav/>
       <div className='abcdef'>
         <div className='marquee-1'>
           <h3 className='marquee-2'> Welcome to Online Doctor Appointment Portal!  ThankYou!  Visit Again </h3>
         </div>
         <div className='xyz'>
-          <div className="Ambulence-container">
+          <div className="Ambulance-container">
             <form onSubmit={handleSubmit} className="booking-form">
               <div className="column-left">
                 <strong><label>Patient ID:</label></strong>
@@ -115,8 +202,8 @@ const Ambulence = () => {
                 <strong><label>Email:</label></strong>
                 <input type="text" name="email" value={newCandidate.email} onChange={handleInputChange} required />
 
-                <strong><label>Phone Number:</label></strong>
-                <input type="text" name="phoneNumber" value={newCandidate.phoneNumber} onChange={handleInputChange} required />
+                <strong><label>Mobile Number:</label></strong>
+                <input type="text" name="mobileNumber" value={newCandidate.mobileNumber} onChange={handleInputChange} required />
 
                 <strong><label>Facilities:</label></strong>
                 <select name="facilities" value={newCandidate.facilities} onChange={handleInputChange} required>
@@ -180,13 +267,12 @@ const Ambulence = () => {
                       <option value="">Select Hospital</option>
                       <option value="Apollo Hospital">Apollo Hospital</option>
                       <option value="MGM Hospital">MGM Hospital</option>
-                      <option value="Continental Hospita">Continental Hospital</option>
+                      <option value="Continental Hospital">Continental Hospital</option>
                       <option value="Yashoda Hospital">Yashoda Hospital</option>
                       <option value="KIMS Hospitals">KIMS Hospitals</option>
                       <option value="Medicover Hospitals">Medicover Hospitals</option>
                       <option value="Sunshine Hospitals">Sunshine Hospitals</option>
                       <option value="MaxCure Hospitals">MaxCure Hospitals</option>
-               
                     </select>
                   </div>
                 )}
@@ -224,30 +310,31 @@ const Ambulence = () => {
                       <option value="">Select Hospital</option>
                       <option value="Apollo Hospital">Apollo Hospital</option>
                       <option value="MGM Hospital">MGM Hospital</option>
-                      <option value="Continental Hospita">Continental Hospital</option>
+                      <option value="Continental Hospital">Continental Hospital</option>
                       <option value="Yashoda Hospital">Yashoda Hospital</option>
                       <option value="KIMS Hospitals">KIMS Hospitals</option>
                       <option value="Medicover Hospitals">Medicover Hospitals</option>
                       <option value="Sunshine Hospitals">Sunshine Hospitals</option>
                       <option value="MaxCure Hospitals">MaxCure Hospitals</option>
-               
                     </select>
                   </div>
                 )}
-
+                  <strong><label>Service Fee:</label></strong>
+                  <span>{newCandidate.serviceFee}</span>
                 <br /><br/>
                 <button type="submit" className="right-button">Submit</button>
               </div>
             </form>
 
-            {successMessage && <div className="success-message">{successMessage}</div>}
-            {errorMessage && <div className="error-message">{errorMessage}</div>}
+           
           </div>
         </div>
       </div>
-    <FooterPage/> 
+      <br/>
+      <br/>
+      <FooterPage></FooterPage>
     </>
   );
 };
 
-export default Ambulence;
+export default AmbulenceServices;

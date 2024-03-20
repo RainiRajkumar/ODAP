@@ -1,76 +1,113 @@
-
-
 import React from "react";
-import "./MedicalHome.css";
-
-import "bootstrap";
-import { Link } from "react-router-dom";
-import Navbar from "../Navbar";
+ import "../Patient/MedicalHome.css";
 import LandNav from "../Landpage/LandNav";
 import FooterPage from "../Landpage/FooterPage";
+import "bootstrap";
+
+import { Link } from "react-router-dom";
+import PatientNav from "./PatientNav";
 
 
 
-export default function MedicalHome() {
+export default function MedicalServicesHome() {
   return (
     <>
+<PatientNav/>
 
-     <LandNav/>
-
-      <div className="container-fluid d-flex flex-column">
+      <div className="container1-fluid d-flex flex-column">
         <div className="row MDfirstcard">
-          <div className="MDfirstcard-cont col-xl-6">
+          <div className="MDfirstcard-cont col-md-6">
             <h1>Online Medical Services</h1>
             <p>book your slot today</p>
-            <button className="Mdfirstcardbtn">Book Slot</button>
+            <Link to="/Therapy"><button className="msbtn">Bookslot</button></Link>
           </div>
-          <div className="MDfirstcard-img col-xl-4"><img src="animateddoctor.jpg"></img></div>
+          <div className="MDfirstcard-img col-md-3 "><img src="animateddoctor.jpg"></img></div>
         </div>
+        
+        <div className="d-flex flex-row helpnumber">
+          <div><h1>Need help booking your slot :</h1>
+            <p>Our team is here to help you.</p></div>
+            <div><p>+91 9909090989</p></div>
+            
+          </div>
+          
+          
+          <div>
+          <h3 className="heading" style={{textAlign:'center',height:'40px'}}>Top booked Medical services.</h3>
+          <div className="d-flex flex-row justify-content-spacearound">
+            <div className="col-md-5 col-xl-2 topservicescard">
+              <p>Therapy</p>
+              <p>Book a therapy session with out best Therapists</p>
+              <p>rupees:400/-</p>
+            </div>
+            <div className="topservicescard col-md-5 col-xl-2 ">
+              <p>Blood transfusion</p>
+              <p>Book a blood transfusion session today</p>
+              <p>rupees:600/-</p>
+            </div>
+            <div className="col-md-5 col-xl-2 topservicescard">
+              <p>Dialysis</p>
+              <p>Book a dialysis session today. </p>
+              <p>rupees:500/-</p>
+            </div>
+            <div className="topservicescard col-md-5 col-xl-2 ">
+              <p>Physiotherapy</p>
+              <p>Book a physiotheray session.</p>
+              <p>rupees:400/-</p>              
+            </div>
+            <div className="topservicescard col-md-5 col-xl-2 ">
+              <p>Day care</p>
+              <p>We are introducing our new service form tomorrow</p>
+              <p>rupees:---</p>
+            </div>
+          </div>
+        </div>
+        
         <div className="row services-section">
-          <div className="col-sm-12 col-md-2 col-xl-2 card">
+          <div className="col-sm-12 col-md-2 col-xl-2 card1">
             <img className="therapyimage" alt="" src="therapy.jpg" />
             <div className="card-bottom">
               <p>Book your Therapy session</p>
               <Link to="/medicalservice"><button className="msbtn">Bookslot</button></Link>
             </div>
           </div>
-
-
-          <div className="col-sm-12 col-md-2 col-xl-2 card">
+          <div className="col-sm-12 col-md-2 col-xl-2 card1">
             <img className="therapyimage" src="dialysis.jpg" alt="" />
             <div className="card-bottom">
-              <p>Book your Therapy session</p>
-              <Link to="/medicalservice"><button className="msbtn">Bookslot</button></Link>
+              <p>Book your Radiology session</p>
+              <Link to="/radiology"><button className="msbtn">Bookslot</button></Link>
             </div>
           </div>
-          <div className="col-sm-12 col-md-2 col-xl-2 card">
+          <div className="col-sm-12 col-md-2 col-xl-2 card1">
             <img className="therapyimage" src="physiotherapy.jpg" alt="" />
             <div className="card-bottom">
-              <p>Book your physiotherapy session</p>
-              <Link to="/medicalservice"><button className="msbtn">Bookslot</button></Link>
+              <p>Book your Pathology session</p>
+              <Link to="/pathology"><button className="msbtn">Bookslot</button></Link>
             </div>
           </div>
-          <div className="col-sm-12 col-md-2 col-xl-2 card">
+          <div className="col-sm-12 col-md-2 col-xl-2 card1">
             <img className="therapyimage" src="bloodtransfusion.jpg" alt="" />
             <div className="card-bottom">
               <p>Book your bloddtransfusion session</p>
-              <Link to="/medicalservice"><button className="msbtn">Bookslot</button></Link>
+              <Link to="/dialysis"><button className="msbtn">Bookslot</button></Link>
             </div>
           </div>
-          <div className="col-sm-12 col-md-2 col-xl-2 card">
+          <div className="col-sm-12 col-md-2 col-xl-2 card1">
             <img className="therapyimage" src="audio.jpg" alt="" />
             <div className="card-bottom">
               <p>Book your Audiology session</p>
-              <Link to="/medicalservice"><button className="msbtn">Bookslot</button></Link>
+              <Link to="/audiology"><button className="msbtn">Bookslot</button></Link>
             </div>
           </div>
         </div>
         <div>
+          <br/>
+          <br/>
 
-          <div className="container-fluid">
+          <div className="container1-fluid">
             <div className="row doctorcards">
-              <h1 className="ourdocs">Our Doctors</h1>
-              <div className="col-sm-12 col-md-3 col-xl-3 doctorprofile d-flex flex-row">
+              <h1 className="ourdocs">Our Doctors</h1><br/>
+              <div className="col-12 col-md-3 col-xl-3 doctorprofile d-flex flex-row">
                 <div>
                   <img className="docimage" src="doctorimage.jpg" alt=""></img>
                   <p>Dr.Agarwal</p>
@@ -126,18 +163,10 @@ export default function MedicalHome() {
                 <img className="articleimg" src="coronovirus.jpg"></img>
               </a>
               <p>CORONOVIRUS</p>
-              <h3>Know the facts about the corono virus</h3>
+              <h3 className="heading">Know the facts about the corono virus</h3>
             </div>
 
-            <div className="articlecard">
-              <a href="https://www.practo.com/healthfeed/eating-right-to-build-immunity-against-cold-and-viral-infections-40908/post">
-
-                <img className="articleimg" src="vitamins.jpg"></img>
-              </a>
-              <p>NUTRIRION</p>
-              <h3>Boost your immunity with good nutrition</h3>
-            </div>
-
+            
           </div>
           
         
@@ -170,7 +199,7 @@ export default function MedicalHome() {
             </button>
           </div>
         </div>
-    <FooterPage/>
+      <FooterPage></FooterPage>
     </>
   );
 }

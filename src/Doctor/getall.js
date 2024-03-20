@@ -1,9 +1,17 @@
 
-import { getDoctorDetails } from "../Patient/Authstate";
+
+  
+var doctors = localStorage.getItem('loggedIn');
+
+// Convert the string back to an object
+var stored = JSON.parse(doctors);
+
+// Access the particular item within the response object
+var dname = stored.doctorName;
+
 const getAllData = async () => {
-    const doctor = getDoctorDetails();
     try {
-      const response = await fetch(`http://localhost:8092/byname/${doctor.doctorFirstname}`);
+      const response = await fetch(`http://localhost:9081/api/v1/get/${dname}`);
       const data = await response.json();
       return data;
     } catch (error) {
@@ -11,5 +19,7 @@ const getAllData = async () => {
       throw error;
     }
   };
+
+       
   
   export { getAllData };

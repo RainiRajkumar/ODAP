@@ -3,26 +3,25 @@ import { Link } from "react-router-dom";
 import { useState,useEffect } from "react";
 import { setPatientDetails } from "./Authstate";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../Navbar";
 import LandNav from "../Landpage/LandNav";
 import FooterPage from "../Landpage/FooterPage";
 
 const ForgotPassword=()=>{
-    const[email,setEmail]=useState('');
+    const[patientEmail,setEmail]=useState('');
     const Navigate=useNavigate();
     
     useEffect(() => {
         // Your conditional fetching logic based on user input
-        if (email !== "") {
-          fetch('http://localhost:8092/api/getall')
+        if (patientEmail !== "") {
+          fetch('http://localhost:8098/getall/patients')
             .then((response) => response.json())
             .then((coursedata) => {
               // Your logic to check if login is successful
-              const isLoginSuccessful = checkLogin(coursedata, email);
+              const isLoginSuccessful = checkLogin(coursedata, patientEmail);
               if (isLoginSuccessful) {
                 const loggedInUser = coursedata.find(
                   (user) =>
-                    user.email === email
+                    user.patientEmail === patientEmail
                 );
                 console.log(loggedInUser);
                 setPatientDetails(loggedInUser);
@@ -41,11 +40,11 @@ const ForgotPassword=()=>{
             
             });
         }
-      }, [email]);
+      }, [patientEmail]);
       function checkLogin( data, enteredEmail) {
        
         return data.some(
-          (user) => user.email === enteredEmail
+          (user) => user.patientEmail === enteredEmail
         );
       }
 

@@ -48,8 +48,11 @@ h3 {
 }
 
 .action-button:hover {
-  background-color: #2980b9;
+  background-color: #e7edee;
 }
 
 
-
+a:hover
+{
+  background-color: cornflowerblue;
+}

@@ -2,7 +2,7 @@
 import axios from "axios";
 
 import { Link } from "react-router-dom";
-import { getPatientDetails } from "./Authstate";
+import { getPatientDetail, getPatientDetails } from "./Authstate";
 import { useState } from "react";
 import Navbar from "../Navbar";
 import LandNav from "../Landpage/LandNav";
@@ -40,7 +40,7 @@ const Changepassword=()=>{
         const userdetails=getPatientDetails();
         if(userdetails){
         try{
-            const response=axios.put(`http://localhost:8092/api/register/${userdetails.patientId}`,data)
+            const response=axios.put(`http://localhost:8098/api/register/${userdetails.patientId}`,data)
 
             setPassword('');
             setConfirmPassword('');

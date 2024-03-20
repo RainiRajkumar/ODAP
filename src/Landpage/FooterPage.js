@@ -1,33 +1,32 @@
 import React from 'react';
 import 'bootstrap-icons/bootstrap-icons.svg';
-import { Link } from 'react-router-dom';
 
 function FooterPage() {
     return (
 <>
         
-<footer class="text-center text-lg-start" style={{backgroundColor: "#b39eb5"}}>
+<footer class="text-center text-lg-start" style={{backgroundColor: "royalblue"}}>
 
   <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom" >
 
     <div class="me-8 d-none d-lg-block">
-      <span>Get connected with us on social networks:</span>
+      <p style={{color:'white'}}>Get connected with us on social networks:</p>
     </div>
 
-    <div>
-      <a href="" class="me-4 text-reset">
+    <div style={{color:'white'}}>
+      <a href="https://www.facebook.com" class="me-4 text-reset">
         <i class="bi bi-facebook" style={{color:'blue',fontSize: '2rem'}}></i>
       </a>
-      <a href="" class="me-4 text-reset">
+      <a href="https://twitter.com" class="me-4 text-reset">
         <i class="bi bi-twitter" style={{color:'rgb(29,161,242)',fontSize: '2rem'}}></i>
       </a>
-      <a href="" class="me-4 text-reset">
+      <a href="https://www.google.com" class="me-4 text-reset">
         <i class="bi bi-google" style={{color:'red',fontSize: '2rem'}}></i>
       </a>
-      <a href="" class="me-4 text-reset">
+      <a href="https://www.instagram.com" class="me-4 text-reset">
         <i class="bi bi-instagram"style={{color:'rgb(254,218,117)',fontSize: '2rem'}}></i>
       </a>
-      <a href="" class="me-4 text-reset">
+      <a href="https://www.linkedin.com" class="me-4 text-reset">
         <i class="bi bi-linkedin" style={{color:'rgb(0,119,181)',fontSize: '2rem'}}></i>
       </a>
       
@@ -35,20 +34,19 @@ function FooterPage() {
   
   </section>
 
-  <section class="">
-    <div class="container text-center text-md-start mt-5">
+  <section style={{color:'white'}}>
+    <div class="container text-center text-md-start mt-5" style={{backgroundColor:'royalblue'}}>
    
       <div class="row mt-3">
        
       <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
        
           <h6 class="text-uppercase fw-bold "style={{textAlign:'center'}}>
-            Company name
+            Portal
           </h6>
           
           <p>
-            Here you can use rows and columns to organize your footer content. Lorem ipsum
-            dolor sit amet, consectetur adipisicing elit.
+            Our Online Doctor Appointment Portal is about Providing Online and Physical Services to the Customers with userfriendly.
           </p>
         </div>
      
@@ -63,17 +61,21 @@ function FooterPage() {
             <a href="#!" class="text-reset">Contact US</a>
           </li>
           <li>
-            <Link to="/doctor">Doctor Login</Link>
+            <a href="/doctor" class="text-reset">Doctor Login</a>
           </li>
           <li>
-            <a href="#!" class="text-reset">Book an Appointment</a>
+            <a href="/technicianlogin" class="text-reset">Technician Login</a>
+          </li>
+          <li>
+            <a href="/adminlogin" class="text-reset">Admin Login</a>
+          </li>
+          <li>
+            <a href="/register" class="text-reset">Book an Appointment</a>
           </li>
           <li>
             <a href="#!" class="text-reset">Know US</a>
           </li>
-          <li>
-            <a href="#!" class="text-reset">Hospitals & Directions</a>
-          </li>
+          
           </ul>
         </div>
       
@@ -84,19 +86,19 @@ function FooterPage() {
           </h6>
           <ul class="list-unstyled" >
           <li>
-            <a href="#!" class="text-reset">Online Services</a>
+            <a href="/register" class="text-reset">Online Services</a>
           </li>
           <li>
-            <a href="#!" class="text-reset">Diagnostics</a>
+            <a href="/register" class="text-reset">Diagnostics</a>
           </li>
           <li>
-            <a href="#!" class="text-reset">Medical Services</a>
+            <a href="/register" class="text-reset">Medical Services</a>
           </li>
           <li>
-            <a href="#!" class="text-reset">Reschedule</a>
+            <a href="/register" class="text-reset">Reschedule</a>
           </li>
           <li>
-            <a href="#!" class="text-reset">Ambulance Services</a>
+            <a href="/register" class="text-reset">Ambulance Services</a>
           </li>
           </ul>
         </div>

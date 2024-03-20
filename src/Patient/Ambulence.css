@@ -1,17 +1,11 @@
 
-.abcdef {
-  margin: 0;
-  padding: 0;
-  font-family: 'Arial', sans-serif;
-  background-image: url('https://e0.pxfuel.com/wallpapers/792/696/desktop-wallpaper-hospital-44-hospital-and-for-mac-pc-medical-equipment.jpg');
-  background-size: cover;
-}
+
 
 .Ambulance-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 150vh;
 }
 
 .booking-form {

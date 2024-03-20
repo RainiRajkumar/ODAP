@@ -1,133 +1,162 @@
-
-
 import React, { useState } from 'react';
 import axios from 'axios';
+import './Diagnostic.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import LandNav from '../Landpage/LandNav';
+import { useNavigate } from 'react-router-dom';
+import PatientNav from './PatientNav';
 import FooterPage from '../Landpage/FooterPage';
 
 function Diagnostic() {
+  const navigate = useNavigate();
   const [patientEmail, setPatientEmail] = useState('');
-  const [patientId, setPatientId] = useState('');
-  const [patientName, setPatientName] = useState('');
+  const [patientId, setPatientId] = useState(particularItem);
+  const [patientName, setPatientName] = useState(name);
   const [diagnosticCenter, setDiagnosticCenter] = useState('');
-  const [dataBooking, setDataBooking] = useState('');
-  const [bookingTime, setBookingTime] = useState('');
+  const [bookingDate, setBookingDate] = useState('');
+  const [bookingTime,setBookingTime]=useState('');
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
   const [address, setAddress] = useState('');
-  const [patientMobileNumber, setPatientMobileNumber] = useState('');
+  const [patientMobileNumber, setPatientMobileNumber] = useState(phone);
   const [testServiceDetails, setTestServiceDetails] = useState('');
-  const [correctReport, setCorrectReport] = useState('');
   const [referralDoctorName, setReferralDoctorName] = useState('');
-  const [pdf, setPdf] = useState('');
+  const [patientPreviousReports, setPreviousReports] = useState('');
+  const [fee, setFee] = useState(0);
 
-  const submit = async () => {
-    const checkbox = document.getElementById('gridCheck');
+  var storedResponseString = localStorage.getItem('loggedIn');
+
+// Convert the string back to an object
+var storedResponse = JSON.parse(storedResponseString);
+
+// Access the particular item within the response object
+var particularItem = storedResponse.patientId;
+var name= storedResponse.patientName;
+var phone= storedResponse.patientMobileNumber;
+
+
+  const handleTestServiceChange = (value) => {
+    setTestServiceDetails(value);
 
     
+    if (value === 'Pathology') {
+      setFee(200);
+    } else if (value === 'Radiology') {
+      setFee(250);
+    } else if (value === 'Physio') {
+      setFee(300);
+    } else if (value === 'Audiology') {
+      setFee(400);
+    } else {
+      setFee(0);
+    }
+  }; 
+
+  const submit = async () => {
     if (
+      
       patientEmail === '' &&
-      patientId === '' &&
-      patientName === '' &&
       diagnosticCenter === '' &&
-      dataBooking === '' &&
-      bookingTime === '' &&
+      bookingDate === '' &&
+      bookingTime === ''&&
+      selectedTimeSlot === '' &&
       address === '' &&
-      patientMobileNumber === '' &&
       testServiceDetails === '' &&
-      correctReport === '' &&
       referralDoctorName === '' &&
-      pdf === ''
+      patientPreviousReports === ''&&
+      fee===''
     ) {
       alert('Please fill in all the fields');
       return;
     }
     
-    
-    if (!/^[a-zA-Z ]+$/.test(patientName)) {
-      alert('Please enter a valid patient name');
-      return;
-    }
+   
 
     if (!/^[\w-]+(\.[\w-]+)*@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}$/.test(patientEmail)) {
       alert('Please enter a valid email address');
       return;
     }
 
-    if (!/^[6-9]\d{9}$/.test(patientMobileNumber)) {
-      alert('Please enter a valid 10-digit mobile number');
-      return;
-    }
+    
 
     const data = {
-      patientEmail,
       patientId,
+      patientEmail,
       patientName,
       diagnosticCenter,
-      dataBooking,
-      bookingTime,
+      bookingDate,
+      bookingTime: selectedTimeSlot,
       address,
       patientMobileNumber,
       testServiceDetails,
-      correctReport,
       referralDoctorName,
-      pdf,
+      patientPreviousReports,
+      fee,
     };
 
     try {
-      const response = await axios.post('http://localhost:8092/api/Patient', data);
+      const response = await axios.post('http://localhost:9094/api/Patient/details', data);
       console.log('Signup Success:', response.data);
+      setPatientId('');
       setPatientEmail('');
       setPatientName('');
       setDiagnosticCenter('');
-      setPatientId('');
-      setDataBooking('');
-      setReferralDoctorName('');
-      setPdf('');
-      setAddress('');
+      setBookingDate('');
       setBookingTime('');
+      setPreviousReports('');
+      setReferralDoctorName('');
+      setAddress('');
       setPatientMobileNumber('');
       setTestServiceDetails('');
-      setCorrectReport('');
-      checkbox.checked = false;
-
-      alert('Payment successful');
+      setSelectedTimeSlot('');
+      if (patientEmail === '') {
+        alert('patientEmail is a required field');
+        document.getElementById('inputpatientEmail4').style.borderColor = 'red';
+      }   else if (referralDoctorName === '') {
+        alert('referralDoctorname is a required field');
+        document.getElementById('inputreferraldoctorname').style.borderColor = 'red';
+      } else if (diagnosticCenter === '') {
+        alert('diagnosticCenter a required field');
+        document.getElementById('inputdiagnosticCenter').style.borderColor = 'red';
+      }
+      
+      alert('Submit successful');
+      navigate('/PaymentDiagnostic');
     } catch (error) {
       console.error('Error occurred:', error);
     }
   };
-
+  
   return (
-<>
-  <LandNav/>
-    <div className="container-fluid bg-body-tertiary p-5" style={{ background: "url('https://thumbs.dreamstime.com/b/doctor-appointment-online-screen-medical-health-care-concept-158662057.jpg')" }}>
+    <>
+    <PatientNav/>
+    <div className="container-fluid bg-body-tertiary p-5" style={{ background: "url('https://www.biospectrumindia.com/uploads/articles/file_20180516_155607_1oa4bk6-14003.jpg')" }}>
       <div className="row">
         <div className="col-12">
           <div className="container pt-4">
             <form className="row g-3">
-              <div className="col-6">
-                <label htmlFor="name" className="form-label text-primary fw-bold">PatientName</label>
-                <input type="text" className="form-control" id="name" value={patientName} onChange={(e) => setPatientName(e.target.value)} placeholder="Enter the Name" required />
-              </div>
-              <div className="col-md-6">
-                <label htmlFor="inputPatientId4" className="form-label text-primary fw-bold">PatientId</label>
-                <input type="text" className="form-control" id="inputPatientId4" value={patientId} onChange={(e) => setPatientId(e.target.value)} placeholder="Enter the PatientId" required />
-              </div>
-              <div className="col-md-6">
-                <label htmlFor="inputPatientEmail4" className="form-label text-primary fw-bold">PatientEmail</label>
-                <input type="text" className="form-control" id="inputPatientEmail4" value={patientEmail} onChange={(e) => setPatientEmail(e.target.value)} placeholder="Enter the PatientMail" required />
-              </div>
-              <div className="col-md-6">
-                <label htmlFor="inputPatientMobileNumber" className="form-label text-primary fw-bold">PatientMobileNumber</label>
-                <input type="text" className="form-control" id="inputPatientMobileNumber" value={patientMobileNumber} onChange={(e) => setPatientMobileNumber(e.target.value)} required />
+            <div className="col-6">
+                <label htmlFor="id" className="form-label text-primary fw-bold">Patient Id</label>
+                <input type="text" className="form-control" id="inputid" value={particularItem}  />
               </div>
               <div className="col-6">
-                <label htmlFor="inputReferralDoctorName" className="form-label text-primary fw-bold">ReferralDoctorName</label>
-                <input type="text" className="form-control" id="inputReferralDoctorName" value={referralDoctorName} onChange={(e) => setReferralDoctorName(e.target.value)} placeholder="Enter the ReferralDoctorName" required />
+                <label htmlFor="name" className="form-label text-primary fw-bold">Patient Name</label>
+                <input type="text" className="form-control" id="name" value={name}  />
+              </div>
+              <div className="col-md-6">
+                <label htmlFor="inputPatientEmail4" className="form-label text-primary fw-bold">Patient Email</label>
+                <input type="email" className="form-control" value={patientEmail} onChange={(e) => setPatientEmail(e.target.value)}  placeholder="Enter the Patient Email" required />
+              </div>
+              <div className="col-md-6">
+                <label htmlFor="inputPatientMobileNumber" className="form-label text-primary fw-bold">Patient Mobile Number</label>
+                <input type="tel" className="form-control" id="inputPatientMobileNumber" value={phone}   />
               </div>
               <div className="col-6">
-                <label htmlFor="inputDiagnosticCenter" className="form-label text-primary fw-bold">DiagnosticCenter</label>
+                <label htmlFor="inputReferralDoctorName" className="form-label text-primary fw-bold">Referral Doctor Name</label>
+                <input type="text" className="form-control" id="inputReferralDoctorName" value={referralDoctorName} onChange={(e) => setReferralDoctorName(e.target.value)} placeholder="Enter the Referral Doctor Name" required />
+              </div>
+              <div className="col-6">
+                <label htmlFor="inputDiagnosticCenter" className="form-label text-primary fw-bold">Diagnostic Center</label>
                 <select name="DiagnosticCenter" value={diagnosticCenter} onChange={(e) => setDiagnosticCenter(e.target.value)} required>
-                  <option value="">Select diagnosticCenter</option>
+                  <option value="">Select Diagnostic Center</option>
                   <option value="Patient Ability">Patient Ability</option>
                   <option value="Patient Medic">Patient Medic</option>
                   <option value="Proven Positive">Proven Positive</option>
@@ -136,55 +165,60 @@ function Diagnostic() {
                 </select>
               </div>
               <div className="col-md-6">
-                <label htmlFor="inputDataBooking" className="form-label text-primary fw-bold">DataBooking</label>
-                <input type="date" className="form-control" id="inputDataBooking" value={dataBooking} onChange={(e) => setDataBooking(e.target.value)} required />
+                <label htmlFor="inputDateBooking" className="form-label text-primary fw-bold">Booking Date</label>
+                <input type="date" className="form-control" id="inputDateBooking" value={bookingDate} onChange={(e) => setBookingDate(e.target.value)} required />
               </div>
               <div className="col-md-6">
-                <label htmlFor="inputBookingTime" className="form-label text-primary fw-bold">BookingTime</label>
-                <select value={bookingTime} onChange={(e) => setBookingTime(e.target.value)}>
-              <option value="Select Time">Select Time</option>
-              <option value="9:00 AM">9:00 AM</option>
-              <option value="10:00 AM">9:30 AM</option>
-              <option value="10:00 AM">10:00 AM</option>
-              <option value="10:00 AM">10:30 AM</option>
-              <option value="10:00 AM">11:00 AM</option>
-              <option value="10:00 AM">11:30 AM</option>
-              <option value="10:00 AM">12:00 PM</option>
-              <option value="10:00 AM">12:30 PM</option>
-              <option value="10:00 AM">1:00 PM</option>
-              <option value="10:00 AM">2:00 PM</option>
-              <option value="10:00 AM">2:30 PM</option>
-              <option value="10:00 AM">3:00 PM</option>
-              <option value="10:00 AM">3:30 PM</option>
-              <option value="10:00 AM">4:00 PM</option>
-              <option value="10:00 AM">4:30 PM</option>
-              <option value="10:00 AM">5:00 PM</option>
-            </select>
+                <label htmlFor="bookingTime" className="form-label text-primary fw-bold">Booking Time:</label>
+                <select
+                  id="bookingTime"
+                  name="bookingTime"
+                  value={selectedTimeSlot}
+                  onChange={(e) => setSelectedTimeSlot(e.target.value)}
+                >
+                  <option value="">Select Time</option>
+                  <option value="10:00 AM">10:00 AM</option>
+                  <option value="10:30 AM">10:30 AM</option>
+                  <option value="11:00 AM">11:00 AM</option>
+                  <option value="11:30 AM">11:30 AM</option>
+                  <option value="12:00 PM">12:00 PM</option>
+                  <option value="12:30 PM">12:30 PM</option>
+                  <option value="1:00 PM">1:00 PM</option>
+                  <option value="1:30 PM">1:30 PM</option>
+                  <option value="2:00 PM">2:00 PM</option>
+                  <option value="2:30 PM">2:30 PM</option>
+                  <option value="3:00 PM">3:00 PM</option>
+                  <option value="3:30 PM">3:30 PM</option>
+                  <option value="4:00 PM">4:00 PM</option>
+                  <option value="4:30 PM">4:30 PM</option>
+                  <option value="5:00 PM">5:00 PM</option>
+                </select>
               </div>
-              
               <div className="col-md-6">
-                <label htmlFor="inputcorrectReport" className="form-label text-primary fw-bold">correctReport</label>
-                <input type="text" className="form-control" id="inputCurroctReport" value={correctReport} onChange={(e) => setCorrectReport(e.target.value)} required />
+                <strong><label type="PPR">Patient Previous Reports:</label></strong>
+                <input type="file" accept=".pdf, .doc, .docx, .jpg, .jpeg, .png" />
               </div>
               <div className="col-md-6">
                 <label htmlFor="inputAddress" className="form-label text-primary fw-bold">Address</label>
-                <input type="text" className="form-control" id="inputCurroctReport" value={address} onChange={(e) => setAddress(e.target.value)} required />
+                <input type="text" className="form-control" id="inputAddress" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Enter the Address" required />
               </div>
               <div className="col-md-6">
-                <label htmlFor="inputTestserviceDetails" className="form-label text-primary fw-bold">TestserviceDetails</label>
-                <input type="text" className="form-control" id="inputTestserviceDetails" value={testServiceDetails} onChange={(e) => setTestServiceDetails(e.target.value)} required />
+                <label htmlFor="inputTestServiceDetails" className="form-label text-primary fw-bold">Test Service Details</label>
+                <select value={testServiceDetails} onChange={(e) => handleTestServiceChange(e.target.value)}>
+                  <option value="">Select Test Service Details</option>
+                  <option value="Pathology">Pathology</option>
+                  <option value="Radiology">Radiology</option>
+                  <option value="Physio">Physio</option>
+                  <option value="Audiology">Audiology</option>
+                </select>
               </div>
-              <div className="col-12">
-                <div className="form-check">
-                  <input className="form-check-input" type="checkbox" id="gridCheck" />
-                  <label className="form-check-label text-primary fw-bold" htmlFor="gridCheck">
-                    Check me out
-                  </label>
-                </div>
+              <div className="col-md-6">
+                <label htmlFor="fee" className="form-label text-primary fw-bold">Fee</label>
+                <input type="text" className="form-control" id="fee" value={fee} readOnly />
               </div>
               <div className="col-12">
                 <button type="button" className="btn btn-primary" onClick={submit}>
-                  Pay Now
+                  Submit
                 </button>
               </div>
             </form>
@@ -193,7 +227,7 @@ function Diagnostic() {
       </div>
     </div>
     <FooterPage/>
-  </>
+    </>
   );
 }
 

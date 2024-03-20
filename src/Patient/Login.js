@@ -1,10 +1,9 @@
 
 import React, { useEffect, useState } from "react";
 import { Link,useNavigate } from "react-router-dom";
-import { setPatientDetails } from "./Authstate";
-import Navbar from "../Navbar";
 import LandNav from "../Landpage/LandNav";
 import FooterPage from "../Landpage/FooterPage";
+import { setPatientDetail, setPatientDetails } from "./Authstate";
 const Login=()=>
 {
 
@@ -17,7 +16,7 @@ const Login=()=>
     {
         if(patientName!== "" && password!== "")
         {
-            fetch('http://localhost:8092/getall/patients')
+            fetch('http://localhost:8098/getall/patients')
             .then((response)=>response.json())
             .then((pdata)=>
             {
@@ -32,11 +31,16 @@ const Login=()=>
                               user.patientName === patientName && user.password === password
                           );
                           console.log(loggedIn);
-                          setPatientDetails(loggedIn);
+                          var responseString = JSON.stringify(loggedIn);
+
+// Store the string in local storage
+localStorage.setItem('loggedIn', responseString);
+//window.localStorage.setItem("myObject",JSON.parse(loggedIn));
+//                          //setPatientDetails(loggedIn);
                           
                         } else {
                           // Handle unsuccessful login
-                          alert("Invalid username or password");
+                          alert("Invalid patientName or password");
                           
                         }
                       })
@@ -80,9 +84,10 @@ const Login=()=>
               <>
            
            <LandNav/>
-                      <div className="container-fluid " style={{backgroundImage:`url(https://www.litmus-solutions.com/wp-content/uploads/2018/12/GettyImages-927897070.jpg)`,height:'600px'}}>
-                      <h2 style={{textAlign:'center',paddingTop:'50px'}}>Login</h2>
+                  <div className="container-fluid " style={{backgroundImage:`url(https://cdn.pixabay.com/photo/2021/02/19/04/00/doctor-6029164_960_720.png)`}}>
+                      <h1 style={{textAlign:'center',paddingTop:'50px'}}> Patient Login</h1>
                           <div className="row">
+                           
                               <div className="col-12">
                                   <form className="p-5">
                               

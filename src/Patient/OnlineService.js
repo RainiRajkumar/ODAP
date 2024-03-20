@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import axios from 'axios';
 
 import { getPatientDetails, setAllPatients } from "./Authstate";
-import Navbar from "../Navbar";
 import LandNav from "../Landpage/LandNav";
 import FooterPage from "../Landpage/FooterPage";
 
@@ -11,6 +10,7 @@ import FooterPage from "../Landpage/FooterPage";
  function OnlineService(){
  
   const patient =getPatientDetails();
+  
   const[doctorFirstname, setDoctorFirstName] = useState('');
   const[bookingdate, setBookingdate] = useState('');
   const[typeofservices, setTypeofservices] = useState('');
@@ -42,7 +42,7 @@ import FooterPage from "../Landpage/FooterPage";
       
       
 
-      const response = await axios.post('http://localhost:8092/booking' ,Data);
+      const response = await axios.post('http://localhost:8094/booking' ,Data);
       setDoctorFirstName('');
       setBookingdate('');
       setTypeofservices('');
@@ -51,7 +51,7 @@ import FooterPage from "../Landpage/FooterPage";
       setEmail('');
       setPhoneNumber('');
       setPatientName('');
-      alert("registration succesful");
+      alert("Booking succesful");
       console.log(response);
       setAllPatients(response);
     

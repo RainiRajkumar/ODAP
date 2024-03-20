@@ -1,16 +1,21 @@
 
 
-let patientDetails=null;
 
-export function setPatientDetails(user)
+
+
+let Patientdetails=null;
+
+export function setPatientDetails(patients)
 {
-    patientDetails=user;
+    Patientdetails=patients;
 }
 
 export function getPatientDetails()
 {
-    return patientDetails;
+    return Patientdetails;
 }
+
+
 
 
 
@@ -27,6 +32,36 @@ export function getAllPatients()
 }
 
 
+
+
+
+
+let slotdetails=null;
+
+export function setSlotDetails(patientslots)
+{
+    slotdetails=patientslots;
+}
+
+export function getSlotDetails()
+{
+    return slotdetails;
+}
+
+
+let appointDetails=null;
+
+export function setAppointDetails(bookedslots)
+{
+    appointDetails=bookedslots;
+}
+
+export function getAppointDetails()
+{
+    return appointDetails;
+}
+
+
 let doctordetails=null;
 
 export function setDoctorDetails(doctor)
@@ -39,3 +74,14 @@ export function  getDoctorDetails()
     return doctordetails;
 }
 
+let technicianDetails=null;
+
+export function setTechnicianDetails(technician)
+{
+    technicianDetails=technician;
+}
+
+export function getTechnicianDetails()
+{
+    return technicianDetails;
+}
